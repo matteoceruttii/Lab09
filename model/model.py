@@ -11,8 +11,6 @@ class Model:
         self._valore_ottimo: int = -1
         self._costo = 0
 
-        # TODO: Aggiungere eventuali altri attributi
-
         # Caricamento
         self.load_tour()
         self.load_attrazioni()
@@ -31,6 +29,8 @@ class Model:
         """ Carica tutte le attrazioni in un dizionario [id, Attrazione]"""
         self.attrazioni_map = AttrazioneDAO.get_attrazioni()
 
+
+# funzione che gestisce la relazione molti a molti
     def load_relazioni(self):
         """
             Interroga il database per ottenere tutte le relazioni fra tour e attrazioni e salvarle nelle strutture dati
@@ -39,8 +39,16 @@ class Model:
             --> Ogni Attrazione ha un set di Tour.
         """
 
-        # TODO
+        # ricavo la lista di relazioni tra Tour e Attrazioni (prese dal database usando il DAO)
+        relazioni = TourDAO.get_tour_attrazioni()
+        for relazione in relazioni:
+            # per ogni tour appendo l'oggetto attrazione contenente set usando come chiave id_attrazione
+            self.tour_map[relazione['id_tour']].attrazioni.add(self.attrazioni_map[relazione['id_attrazione']])
+            # per ogni attrazione appendo l'oggetto tour contenente set usando come chiave id_tour
+            self.attrazioni_map[relazione['id_attrazione']].tour.add(self.tour_map[relazione['id_tour']])
 
+
+# funzione che genera il pacchetto tramite ricorsione
     def genera_pacchetto(self, id_regione: str, max_giorni: int = None, max_budget: float = None):
         """
         Calcola il pacchetto turistico ottimale per una regione rispettando i vincoli di durata, budget e attrazioni uniche.
@@ -56,11 +64,24 @@ class Model:
         self._costo = 0
         self._valore_ottimo = -1
 
-        # TODO
+        # valori di inizializzazione
+        self._id_regione = id_regione
+        self._max_giorni = max_giorni if max_giorni is not None else float('inf')
+        self._max_budget = max_budget if max_budget is not None else float('inf')
 
+        # richiamo della funzione di ricorsione
+        self._ricorsione(0, [], 0, 0, 0, set())
         return self._pacchetto_ottimo, self._costo, self._valore_ottimo
+
 
     def _ricorsione(self, start_index: int, pacchetto_parziale: list, durata_corrente: int, costo_corrente: float, valore_corrente: int, attrazioni_usate: set):
         """ Algoritmo di ricorsione che deve trovare il pacchetto che massimizza il valore culturale"""
 
         # TODO: è possibile cambiare i parametri formali della funzione se ritenuto opportuno
+
+        # condizione di uscita
+        if ...:
+            pass
+        # condizione di ricorsione
+        else:
+            pass
