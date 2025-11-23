@@ -91,7 +91,7 @@ class Model:
         tours = self.tour_disponibili()
         for i in range(start_index, len(tours)):
             tour = tours[i]
-            attrazioni_tour = set([rel["id_attrazione"] for rel in self.relazioni_map if rel['id_tour'] == tour.id])
+            attrazioni_tour = set([rel["id_attrazione"] for rel in self.load_relazioni() if rel['id_tour'] == tour.id])
             attrazioni_non_usate = attrazioni_tour - attrazioni_usate
             if attrazioni_non_usate:
                 nuovo_costo = costo_corrente + tour.costo
