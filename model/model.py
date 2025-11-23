@@ -77,11 +77,30 @@ class Model:
     def _ricorsione(self, start_index: int, pacchetto_parziale: list, durata_corrente: int, costo_corrente: float, valore_corrente: int, attrazioni_usate: set):
         """ Algoritmo di ricorsione che deve trovare il pacchetto che massimizza il valore culturale"""
 
-        # TODO: è possibile cambiare i parametri formali della funzione se ritenuto opportuno
+        # condizione di esistenza del problema (sorta di vincolo iniziale per limitare la lunghezza delle soluzioni parziali)
+        if costo_corrente > self._max_budget or durata_corrente > self._max_giorni:
+            return
 
         # condizione di uscita
-        if ...:
-            pass
+        if valore_corrente > self._valore_ottimo:
+            self._valore_ottimo = valore_corrente
+            self._costo = costo_corrente
+            self._pacchetto_ottimo = pacchetto_parziale.copy()
+
         # condizione di ricorsione
-        else:
-            pass
+        tours = self.tour_disponibili()
+        for i in range(start_index, len(tours)):
+            tour = tours[i]
+            attrazioni_tour = set([rel["id_attrazione"] for rel in self.relazioni_map if rel['id_tour'] == tour.id])
+            attrazioni_non_usate = attrazioni_tour - attrazioni_usate
+            if attrazioni_non_usate:
+                nuovo_costo = costo_corrente + tour.costo
+                nuova_durata = durata_corrente + tour.durata
+                nuovo_valore = valore_corrente + max(self.attrazioni_map[a].valore_culturale for a in attrazioni_non_usate)
+                # back tracking
+                nuovo_attrazioni_usate = attrazioni_tour - attrazioni_non_usate
+                self._ricorsione(i+1, pacchetto_parziale + [tour], nuova_durata, nuovo_costo, nuovo_valore, nuovo_attrazioni_usate)
+
+
+    def tour_disponibili(self):
+        return [tour for tour in self.tour_map.values() if tour.id_regione == self._id_regione]
